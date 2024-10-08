@@ -8,5 +8,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@pinecone-database/pinecone": "^3.0.3"
+  },
+  "type": "module" 
 }
