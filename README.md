@@ -8,4 +8,4 @@ npm install @pinecone-database/pinecone
 
 Este es un proyecto increíble que hace cosas increíbles.
 
-![Creado el index](images/image.png)
+![Creado el index](img/image.png)
