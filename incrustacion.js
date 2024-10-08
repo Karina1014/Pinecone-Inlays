@@ -1,7 +1,7 @@
 import { Pinecone } from '@pinecone-database/pinecone';
 
 // Inicializa un cliente de Pinecone
-const pc = new Pinecone({ apiKey: 'ca40ceca-1678-4efc-ac07-146e28c1bfb7' });
+const pc = new Pinecone({ apiKey: 'tu-api-key' });
 
 async function crearIndice() {
     const indexName = "example-index-en-js";
