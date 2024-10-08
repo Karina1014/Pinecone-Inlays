@@ -1,38 +1,33 @@
 import { Pinecone } from '@pinecone-database/pinecone';
+import { HfInference } from '@huggingface/inference';
 
-// Inicializa un cliente de Pinecone
-const pc = new Pinecone({ apiKey: 'tu-api-key' });
+// Configuración de la API de Pinecone y Hugging Face
+const pc = new Pinecone({ apiKey: 'ca40ceca-1678-4efc-ac07-146e28c1bfb7' });
+const index = pc.index("chatbotmedver2024");
+const hf = new HfInference('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'); // Reemplaza con tu token de acceso real
 
-async function crearIndice() {
-    const indexName = "example-index-en-js";
+async function queryPinecone() {
+    try {
+        // Generar el embedding para la pregunta
+        const inputText = "TIENE HORARIO";
+        const embeddingResponse = await hf.embeddings({
+            model: 'sentence-transformers/all-MiniLM-L6-v2',
+            inputs: [inputText] // Debes pasar un array
+        });
 
-    // Verifica si el índice ya existe
-    const indices = await pc.listIndexes();
-    console.log('Índices disponibles:', indices); // Agrega esta línea para depuración
+        const embeddingVector = embeddingResponse[0].embedding; // Acceder al embedding
 
-    // Asegúrate de que indices sea un array
-    const indicesArray = Array.isArray(indices) ? indices : indices.indexes || []; // Ajusta según la estructura real
+        // Realizar la consulta en Pinecone
+        const queryResponse = await index.namespace('chatbotmedver2024').query({
+            vector: embeddingVector,
+            topK: 3,
+            includeValues: true
+        });
 
-    if (indicesArray.includes(indexName)) {
-        console.log(`El índice "${indexName}" ya existe.`);
-        return;
+        console.log("Consulta exitosa:", queryResponse);
+    } catch (error) {
+        console.error("Error en la consulta:", error);
     }
-
-    // Crea un índice serverless
-    await pc.createIndex({
-        name: indexName,
-        dimension: 300, 
-        metric: 'cosine',
-        spec: {
-            serverless: {
-                cloud: 'aws',
-                region: 'us-east-1'
-            }
-        }
-    });
-
-    console.log(`Índice "${indexName}" creado exitosamente.`);
 }
 
-// Llama a la función para crear el índice
-crearIndice().catch(console.error);
+queryPinecone();
