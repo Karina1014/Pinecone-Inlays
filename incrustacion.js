@@ -1,33 +1,33 @@
-import { Pinecone } from '@pinecone-database/pinecone';
-import { HfInference } from '@huggingface/inference';
-
-// Configuración de la API de Pinecone y Hugging Face
-const pc = new Pinecone({ apiKey: 'ca40ceca-1678-4efc-ac07-146e28c1bfb7' });
-const index = pc.index("chatbotmedver2024");
-const hf = new HfInference('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'); // Reemplaza con tu token de acceso real
-
-async function queryPinecone() {
+import {
+    GoogleGenerativeAI,
+    HarmCategory,
+    HarmBlockThreshold,
+  } from "@google/generative-ai";
+  
+  const MODEL_NAME = "gemini-1.0-pro"; // Asegúrate de que este modelo soporte embeddings
+  const API_KEY = "AIzaSyAWnm3H-6FSgzkiQ57bYxVEXZF2GW4CMHo"; // Asegúrate de que esta clave esté protegida
+  
+  async function obtenerEmbeddings(texto) {
+    const genAI = new GoogleGenerativeAI(API_KEY);
+    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  
     try {
-        // Generar el embedding para la pregunta
-        const inputText = "TIENE HORARIO";
-        const embeddingResponse = await hf.embeddings({
-            model: 'sentence-transformers/all-MiniLM-L6-v2',
-            inputs: [inputText] // Debes pasar un array
+        // Realiza la solicitud para obtener embeddings
+        const embeddingsResponse = await model.getEmbeddings({ 
+            inputs: [texto] // Envía el texto como un array
         });
-
-        const embeddingVector = embeddingResponse[0].embedding; // Acceder al embedding
-
-        // Realizar la consulta en Pinecone
-        const queryResponse = await index.namespace('chatbotmedver2024').query({
-            vector: embeddingVector,
-            topK: 3,
-            includeValues: true
-        });
-
-        console.log("Consulta exitosa:", queryResponse);
+  
+        // Procesa y devuelve los embeddings
+        const embeddings = embeddingsResponse.data; // Asegúrate de acceder correctamente a los datos
+        console.log('Embeddings:', embeddings); // Imprime los embeddings
+        return embeddings;
     } catch (error) {
-        console.error("Error en la consulta:", error);
+        console.error("Error al obtener embeddings:", error);
+        return null; // Manejo de errores
     }
-}
-
-queryPinecone();
+  }
+  
+  // Ejemplo de uso
+  const textoEjemplo = "Este es un ejemplo de texto para obtener embeddings.";
+  obtenerEmbeddings(textoEjemplo);
+  
