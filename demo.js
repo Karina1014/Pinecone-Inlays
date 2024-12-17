@@ -6,7 +6,7 @@ const pc = new Pinecone({ apiKey: 'ca40ceca-1678-4efc-ac07-146e28c1bfb7' });
 const extractor = await pipeline('feature-extraction', 'nomic-ai/nomic-embed-text-v1.5');
 
 async function verificarYConsultarIndice() {
-    const indexName = "chatbotmedver2024"; // Cambia aquí por el nombre del índice que deseas verificar
+    const indexName = "nuevomedvet"; // Cambia aquí por el nombre del índice que deseas verificar
     const indices = await pc.listIndexes();
 
     console.log('Índices disponibles:', indices); // Muestra los índices disponibles para depuración
